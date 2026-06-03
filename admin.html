@@ -1,0 +1,1622 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Waitlist Dashboard — Bibi Leonard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --brown: #2c1a0e;
+        --brown-mid: #4a2c18;
+        --brown-light: #7a4828;
+        --olive: #5c6b3a;
+        --olive-light: #7a8f52;
+        --olive-pale: #a8b87a;
+        --beige: #ede5d4;
+        --beige-light: #f7f2ea;
+        --warm-white: #fdfaf5;
+        --cream: #f3ede0;
+        --text: #1e1208;
+        --text-mid: #4a3020;
+        --text-light: #7a5c40;
+        --gold: #c8952a;
+        --gold-light: #e8b84a;
+        --red: #c0392b;
+        --red-light: #fdf0ee;
+      }
+
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--beige-light);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      /* ── HEADER ── */
+      .admin-header {
+        background: var(--brown);
+        padding: 0 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 60px;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        border-bottom: 2px solid rgba(200, 149, 42, 0.3);
+      }
+      .admin-header-brand {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        font-size: 15px;
+        color: var(--beige);
+      }
+      .admin-header-brand strong {
+        font-style: normal;
+        color: var(--gold-light);
+        margin-right: 6px;
+      }
+      .admin-header-back {
+        font-size: 12.5px;
+        color: rgba(237, 229, 212, 0.6);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: color 0.2s;
+      }
+      .admin-header-back:hover {
+        color: var(--beige);
+      }
+
+      /* ── MAIN ── */
+      .admin-main {
+        padding: 28px 32px 60px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .page-title {
+        font-family: "Playfair Display", serif;
+        font-size: 26px;
+        color: var(--brown);
+        margin-bottom: 4px;
+      }
+      .page-subtitle {
+        font-size: 13.5px;
+        color: var(--text-light);
+        margin-bottom: 28px;
+      }
+
+      /* ── STATS ── */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .stat-card {
+        background: var(--warm-white);
+        border: 1px solid var(--beige);
+        border-radius: 12px;
+        padding: 20px 22px;
+      }
+      .stat-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--text-light);
+        margin-bottom: 8px;
+      }
+      .stat-value {
+        font-family: "Playfair Display", serif;
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--brown);
+        line-height: 1;
+      }
+      .stat-note {
+        font-size: 12px;
+        color: var(--text-light);
+        margin-top: 4px;
+      }
+
+      @media (max-width: 800px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 480px) {
+        .stats-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      /* ── TOOLBAR ── */
+      .toolbar {
+        background: var(--warm-white);
+        border: 1px solid var(--beige);
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      .search-wrap {
+        position: relative;
+        flex: 1;
+        min-width: 200px;
+      }
+      .search-wrap svg {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-light);
+        pointer-events: none;
+      }
+      .search-input {
+        width: 100%;
+        padding: 9px 12px 9px 36px;
+        border: 1.5px solid var(--beige);
+        border-radius: 7px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        color: var(--text);
+        background: var(--warm-white);
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .search-input:focus {
+        border-color: var(--olive);
+      }
+
+      .filter-select {
+        padding: 9px 32px 9px 12px;
+        border: 1.5px solid var(--beige);
+        border-radius: 7px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 13.5px;
+        color: var(--text-mid);
+        background: var(--warm-white);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237A5C40' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        -webkit-appearance: none;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.2s;
+        min-width: 130px;
+      }
+      .filter-select:focus {
+        border-color: var(--olive);
+      }
+
+      .controls-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .results-count {
+        font-size: 13px;
+        color: var(--text-light);
+        font-weight: 500;
+      }
+      .results-count strong {
+        color: var(--brown);
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition:
+          background 0.15s,
+          transform 0.1s;
+        text-decoration: none;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      .btn-primary {
+        background: var(--olive);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--olive-light);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--text-mid);
+        border: 1.5px solid var(--beige);
+      }
+      .btn-outline:hover {
+        background: var(--cream);
+        border-color: var(--olive-pale);
+      }
+
+      .btn-danger {
+        background: var(--red-light);
+        color: var(--red);
+        border: 1.5px solid #f5c6c2;
+      }
+      .btn-danger:hover {
+        background: #f9ddd9;
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: var(--text-light);
+        border: 1.5px solid transparent;
+      }
+      .btn-ghost:hover {
+        background: var(--cream);
+        color: var(--brown);
+      }
+
+      /* ── TABLE ── */
+      .table-card {
+        background: var(--warm-white);
+        border: 1px solid var(--beige);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .table-scroll {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        min-width: 1080px;
+        border-collapse: collapse;
+        font-size: 13.5px;
+      }
+
+      thead tr {
+        background: var(--cream);
+        border-bottom: 2px solid var(--beige);
+      }
+      th {
+        padding: 12px 14px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: var(--text-light);
+        white-space: nowrap;
+        user-select: none;
+      }
+      th.sortable {
+        cursor: pointer;
+        transition: color 0.15s;
+      }
+      th.sortable:hover {
+        color: var(--brown);
+      }
+      th.sort-asc::after {
+        content: " ↑";
+        color: var(--olive);
+      }
+      th.sort-desc::after {
+        content: " ↓";
+        color: var(--olive);
+      }
+
+      tbody tr {
+        border-bottom: 1px solid var(--beige-light);
+        transition: background 0.12s;
+        cursor: pointer;
+      }
+      tbody tr:last-child {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: var(--beige-light);
+      }
+
+      td {
+        padding: 13px 14px;
+        color: var(--text-mid);
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+
+      td.col-num {
+        color: var(--text-light);
+        font-size: 12px;
+        width: 44px;
+      }
+      td.col-date {
+        color: var(--text-light);
+        font-size: 12.5px;
+        width: 96px;
+      }
+      td.col-name {
+        font-weight: 600;
+        color: var(--brown);
+        min-width: 140px;
+      }
+      td.col-email {
+        min-width: 190px;
+      }
+      td.col-email a {
+        color: var(--olive);
+        text-decoration: none;
+      }
+      td.col-email a:hover {
+        text-decoration: underline;
+      }
+      td.col-ig {
+        color: var(--text-mid);
+      }
+      td.col-profession {
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      td.col-actions {
+        width: 54px;
+        text-align: center;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 100px;
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+      .badge-yes {
+        background: #e8f3e8;
+        color: #2e7d32;
+      }
+      .badge-maybe {
+        background: #fff8e1;
+        color: #b07000;
+      }
+      .badge-no {
+        background: var(--beige-light);
+        color: var(--text-light);
+      }
+
+      .btn-delete {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        border: none;
+        background: transparent;
+        color: var(--text-light);
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.15s,
+          color 0.15s;
+        margin: 0 auto;
+      }
+      .btn-delete:hover {
+        background: var(--red-light);
+        color: var(--red);
+      }
+
+      /* ── EMPTY STATE ── */
+      .empty-cell {
+        text-align: center;
+        padding: 60px 20px !important;
+        cursor: default !important;
+      }
+      .empty-state {
+        color: var(--text-light);
+      }
+      .empty-state p {
+        font-size: 15px;
+      }
+      .empty-state .empty-icon {
+        font-size: 40px;
+        margin-bottom: 14px;
+      }
+
+      /* ── MODAL ── */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(28, 14, 6, 0.55);
+        z-index: 200;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        backdrop-filter: blur(3px);
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+
+      .modal-box {
+        background: var(--warm-white);
+        border-radius: 16px;
+        width: 100%;
+        max-width: 680px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 24px 60px rgba(28, 14, 6, 0.3);
+        animation: modalIn 0.2s ease;
+      }
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .modal-header {
+        padding: 24px 28px 20px;
+        border-bottom: 1px solid var(--beige);
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        position: sticky;
+        top: 0;
+        background: var(--warm-white);
+        border-radius: 16px 16px 0 0;
+        z-index: 1;
+      }
+      .modal-header h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        color: var(--brown);
+        margin-bottom: 4px;
+      }
+      .modal-header p {
+        font-size: 13px;
+        color: var(--text-light);
+      }
+
+      .modal-close {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1.5px solid var(--beige);
+        background: transparent;
+        color: var(--text-light);
+        font-size: 15px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: background 0.15s;
+      }
+      .modal-close:hover {
+        background: var(--cream);
+        color: var(--brown);
+      }
+
+      .modal-body {
+        padding: 24px 28px 28px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .detail-section {
+        background: var(--cream);
+        border-radius: 10px;
+        padding: 18px;
+      }
+      .detail-section.full {
+        grid-column: 1 / -1;
+      }
+
+      .detail-section h3 {
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--olive);
+        margin-bottom: 12px;
+      }
+
+      .detail-row {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        margin-bottom: 10px;
+      }
+      .detail-row:last-child {
+        margin-bottom: 0;
+      }
+      .detail-label {
+        font-size: 11px;
+        color: var(--text-light);
+        font-weight: 600;
+      }
+      .detail-value {
+        font-size: 14px;
+        color: var(--text-mid);
+        word-break: break-word;
+      }
+
+      .detail-goal {
+        font-size: 14px;
+        color: var(--text-mid);
+        line-height: 1.7;
+      }
+
+      .challenge-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
+      }
+      .challenge-tag {
+        background: var(--beige);
+        color: var(--brown-mid);
+        border-radius: 100px;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      /* ── TOAST ── */
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--brown);
+        color: var(--beige);
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 13.5px;
+        font-weight: 500;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        z-index: 300;
+        display: none;
+        animation: slideUp 0.2s ease;
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .admin-main {
+          padding: 20px 16px 48px;
+        }
+        .modal-body {
+          grid-template-columns: 1fr;
+        }
+        .detail-section.full {
+          grid-column: 1;
+        }
+        .modal-header {
+          padding: 20px;
+        }
+        .modal-body {
+          padding: 16px 20px 20px;
+        }
+      }
+
+      /* ── LOGIN GATE ── */
+      .login-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--beige-light);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .login-card {
+        background: var(--warm-white);
+        border: 1px solid var(--beige);
+        border-radius: 16px;
+        padding: 40px 36px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 8px 32px rgba(44, 26, 14, 0.12);
+      }
+      .login-brand {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        font-size: 18px;
+        color: var(--brown);
+        margin-bottom: 4px;
+      }
+      .login-brand strong {
+        font-style: normal;
+        color: var(--gold);
+        margin-right: 4px;
+      }
+      .login-subtitle {
+        font-size: 13px;
+        color: var(--text-light);
+        margin-bottom: 28px;
+      }
+      .login-field {
+        margin-bottom: 16px;
+      }
+      .login-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--text-mid);
+        margin-bottom: 6px;
+      }
+      .login-input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid var(--beige);
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        color: var(--text);
+        background: var(--warm-white);
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .login-input:focus {
+        border-color: var(--olive);
+      }
+      .login-error {
+        font-size: 13px;
+        color: var(--red);
+        background: var(--red-light);
+        border: 1px solid #f5c6c2;
+        padding: 10px 14px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+        display: none;
+      }
+      .btn-login {
+        width: 100%;
+        padding: 11px;
+        background: var(--brown);
+        color: var(--beige);
+        border: none;
+        border-radius: 8px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 4px;
+      }
+      .btn-login:hover { background: var(--brown-mid); }
+      .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+    </style>
+  </head>
+  <body>
+    <!-- LOGIN GATE -->
+    <div class="login-overlay" id="login-overlay">
+      <div class="login-card">
+        <div class="login-brand"><strong>Admin</strong> Bibi Leonard</div>
+        <p class="login-subtitle">Sign in to access the waitlist dashboard.</p>
+        <div class="login-error" id="login-error"></div>
+        <div class="login-field">
+          <label class="login-label" for="login-email">Email</label>
+          <input class="login-input" type="email" id="login-email" placeholder="admin@example.com" autocomplete="email" />
+        </div>
+        <div class="login-field">
+          <label class="login-label" for="login-password">Password</label>
+          <input class="login-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <button class="btn-login" id="login-btn" onclick="handleLogin()">Sign in</button>
+      </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="admin-header">
+      <div class="admin-header-brand">
+        <strong>Admin</strong> Bibi Leonard · Waitlist Dashboard
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <a href="index.html" class="admin-header-back"> ← Back to site </a>
+        <button class="btn btn-ghost" style="font-size:12.5px;padding:5px 12px;color:rgba(237,229,212,0.6);border-color:rgba(237,229,212,0.15)" onclick="handleLogout()">Sign out</button>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="admin-main">
+      <h1 class="page-title">Waitlist Entries</h1>
+      <p class="page-subtitle">
+        All registrations from the waitlist form. Data is fetched live from
+        Supabase.
+      </p>
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Entries</div>
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-note" id="stat-note-filtered"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Countries</div>
+          <div class="stat-value" id="stat-countries">0</div>
+          <div class="stat-note">unique</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Top Platform</div>
+          <div
+            class="stat-value"
+            style="font-size: 22px; padding-top: 4px"
+            id="stat-platform"
+          >
+            —
+          </div>
+          <div class="stat-note" id="stat-platform-note"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Want Coaching</div>
+          <div class="stat-value" id="stat-coaching">—</div>
+          <div class="stat-note">answered Yes</div>
+        </div>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="filter-row">
+          <div class="search-wrap">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+              <circle
+                cx="6.5"
+                cy="6.5"
+                r="5"
+                stroke="currentColor"
+                stroke-width="1.5"
+              />
+              <path
+                d="M10.5 10.5L13.5 13.5"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+            <input
+              id="search-input"
+              class="search-input"
+              type="text"
+              placeholder="Search name, email, Instagram, profession, goal…"
+            />
+          </div>
+          <select id="filter-country" class="filter-select">
+            <option value="">All Countries</option>
+          </select>
+          <select id="filter-platform" class="filter-select">
+            <option value="">All Platforms</option>
+          </select>
+          <select id="filter-audience" class="filter-select">
+            <option value="">All Audiences</option>
+          </select>
+          <select
+            id="filter-coaching"
+            class="filter-select"
+            style="min-width: 140px"
+          >
+            <option value="">Coaching: All</option>
+            <option value="Yes">Coaching: Yes</option>
+            <option value="Maybe">Coaching: Maybe</option>
+            <option value="No">Coaching: No</option>
+          </select>
+          <select
+            id="filter-early"
+            class="filter-select"
+            style="min-width: 150px"
+          >
+            <option value="">Early Access: All</option>
+            <option value="Yes">Early Access: Yes</option>
+            <option value="No">Early Access: No</option>
+          </select>
+        </div>
+        <div class="controls-row">
+          <span class="results-count" id="results-count"></span>
+          <div class="btn-group">
+            <button class="btn btn-ghost" onclick="clearFilters()">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path
+                  d="M1 1l10 10M11 1L1 11"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </svg>
+              Clear filters
+            </button>
+            <button class="btn btn-primary" onclick="exportCSV()">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <path
+                  d="M6.5 1v8M3.5 6.5l3 3 3-3M1.5 11h10"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Export CSV
+            </button>
+            <button class="btn btn-danger" onclick="confirmClearAll()">
+              Clear all
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-card">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 44px">#</th>
+                <th
+                  class="sortable"
+                  data-sort="submittedAt"
+                  onclick="setSort('submittedAt')"
+                  style="width: 96px"
+                >
+                  Date
+                </th>
+                <th
+                  class="sortable"
+                  data-sort="fullName"
+                  onclick="setSort('fullName')"
+                  style="min-width: 140px"
+                >
+                  Name
+                </th>
+                <th
+                  class="sortable"
+                  data-sort="email"
+                  onclick="setSort('email')"
+                  style="min-width: 190px"
+                >
+                  Email
+                </th>
+                <th style="min-width: 110px">Instagram</th>
+                <th
+                  class="sortable"
+                  data-sort="country"
+                  onclick="setSort('country')"
+                  style="min-width: 110px"
+                >
+                  Country
+                </th>
+                <th
+                  class="sortable"
+                  data-sort="profession"
+                  onclick="setSort('profession')"
+                  style="min-width: 150px"
+                >
+                  Profession
+                </th>
+                <th
+                  class="sortable"
+                  data-sort="platform"
+                  onclick="setSort('platform')"
+                  style="min-width: 100px"
+                >
+                  Platform
+                </th>
+                <th
+                  class="sortable"
+                  data-sort="audienceSize"
+                  onclick="setSort('audienceSize')"
+                  style="min-width: 110px"
+                >
+                  Audience
+                </th>
+                <th
+                  class="sortable"
+                  data-sort="earlyAccess"
+                  onclick="setSort('earlyAccess')"
+                  style="min-width: 105px"
+                >
+                  Early Access
+                </th>
+                <th
+                  class="sortable"
+                  data-sort="coaching"
+                  onclick="setSort('coaching')"
+                  style="min-width: 100px"
+                >
+                  Coaching
+                </th>
+                <th style="width: 54px"></th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- DETAIL MODAL -->
+    <div class="modal-overlay" id="modal" onclick="onModalOverlayClick(event)">
+      <div class="modal-box">
+        <div id="modal-content"></div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+      const supabase = createClient(
+        "https://xplotwcukaxzdavolbzm.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwbG90d2N1a2F4emRhdm9sYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzgzNzksImV4cCI6MjA5NjAxNDM3OX0.let3FfPo3gUxT8zuZBvQbhjWM1E5mi6xGFk8Ua0eKPI",
+      );
+
+      // ── STATE ──────────────────────────────────────────────────────────────
+      let allEntries = [];
+      let filteredEntries = [];
+      let sortField = "submittedAt";
+      let sortDir = "desc";
+      let filters = {
+        search: "",
+        country: "",
+        platform: "",
+        audienceSize: "",
+        coaching: "",
+        earlyAccess: "",
+      };
+
+      const AUDIENCE_ORDER = [
+        "Less than 500",
+        "500–1,000",
+        "1,000–5,000",
+        "5,000–10,000",
+        "10,000+",
+      ];
+
+      // Map Supabase snake_case columns to the camelCase used throughout this file
+      function mapEntry(row) {
+        return {
+          id: row.id,
+          submittedAt: row.submitted_at,
+          firstName: row.first_name || "",
+          lastName: row.last_name || "",
+          email: row.email || "",
+          phone: row.phone || "",
+          instagram: row.instagram || "",
+          linkedin: row.linkedin || "",
+          profession: row.profession || "",
+          website: row.website || "",
+          country: row.country || "",
+          experience: row.experience || "",
+          audienceSize: row.audience_size || "",
+          platform: row.current_platform || "",
+          contentType: row.content_type || "",
+          challenges: row.branding_challenge || "",
+          goal: row.branding_goal || "",
+          earlyAccess: row.early_access || "",
+          coaching: row.one_on_one || "",
+        };
+      }
+
+      // ── LOAD & INIT ────────────────────────────────────────────────────────
+      async function loadEntries() {
+        const tbody = document.getElementById("table-body");
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="12" class="empty-cell">
+              <div class="empty-state"><p>Loading entries…</p></div>
+            </td>
+          </tr>`;
+
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .order("submitted_at", { ascending: false });
+
+        if (error) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="12" class="empty-cell">
+                <div class="empty-state">
+                  <p style="color:var(--red)">Failed to load data: ${esc(error.message)}</p>
+                </div>
+              </td>
+            </tr>`;
+          return;
+        }
+
+        allEntries = (data || []).map(mapEntry);
+        populateFilterDropdowns();
+        applyFilters();
+      }
+
+      function populateFilterDropdowns() {
+        const unique = (key) =>
+          [...new Set(allEntries.map((e) => e[key]).filter(Boolean))].sort();
+
+        const countries = unique("country");
+        const platforms = unique("platform");
+        const audiences = [
+          ...new Set(allEntries.map((e) => e.audienceSize).filter(Boolean)),
+        ].sort((a, b) => AUDIENCE_ORDER.indexOf(a) - AUDIENCE_ORDER.indexOf(b));
+
+        refillSelect("filter-country", countries, "All Countries");
+        refillSelect("filter-platform", platforms, "All Platforms");
+        refillSelect("filter-audience", audiences, "All Audiences");
+      }
+
+      function refillSelect(id, values, placeholder) {
+        const sel = document.getElementById(id);
+        const current = sel.value;
+        while (sel.options.length > 1) sel.remove(1);
+        values.forEach((v) => sel.add(new Option(v, v)));
+        if (values.includes(current)) sel.value = current;
+      }
+
+      // ── FILTERS & SORT ─────────────────────────────────────────────────────
+      function applyFilters() {
+        filteredEntries = allEntries.filter((entry) => {
+          if (filters.search) {
+            const s = filters.search.toLowerCase();
+            const hay = [
+              entry.firstName,
+              entry.lastName,
+              entry.email,
+              entry.instagram,
+              entry.profession,
+              entry.country,
+              entry.goal,
+              entry.platform,
+              entry.challenges,
+            ]
+              .join(" ")
+              .toLowerCase();
+            if (!hay.includes(s)) return false;
+          }
+          if (filters.country && entry.country !== filters.country)
+            return false;
+          if (filters.platform && entry.platform !== filters.platform)
+            return false;
+          if (
+            filters.audienceSize &&
+            entry.audienceSize !== filters.audienceSize
+          )
+            return false;
+          if (filters.coaching && entry.coaching !== filters.coaching)
+            return false;
+          if (filters.earlyAccess && entry.earlyAccess !== filters.earlyAccess)
+            return false;
+          return true;
+        });
+        sortEntries();
+        renderTable();
+        updateStats();
+        updateResultsCount();
+      }
+
+      function sortEntries() {
+        filteredEntries.sort((a, b) => {
+          let va, vb;
+          if (sortField === "fullName") {
+            va = `${a.firstName} ${a.lastName}`.toLowerCase();
+            vb = `${b.firstName} ${b.lastName}`.toLowerCase();
+          } else if (sortField === "audienceSize") {
+            va = AUDIENCE_ORDER.indexOf(a.audienceSize);
+            vb = AUDIENCE_ORDER.indexOf(b.audienceSize);
+            if (va === -1) va = 999;
+            if (vb === -1) vb = 999;
+            return sortDir === "asc" ? va - vb : vb - va;
+          } else {
+            va = (a[sortField] || "").toLowerCase();
+            vb = (b[sortField] || "").toLowerCase();
+          }
+          if (va < vb) return sortDir === "asc" ? -1 : 1;
+          if (va > vb) return sortDir === "asc" ? 1 : -1;
+          return 0;
+        });
+      }
+
+      function setSort(field) {
+        if (sortField === field) {
+          sortDir = sortDir === "asc" ? "desc" : "asc";
+        } else {
+          sortField = field;
+          sortDir = field === "submittedAt" ? "desc" : "asc";
+        }
+        document.querySelectorAll("th[data-sort]").forEach((th) => {
+          th.classList.remove("sort-asc", "sort-desc");
+          if (th.dataset.sort === field)
+            th.classList.add(sortDir === "asc" ? "sort-asc" : "sort-desc");
+        });
+        sortEntries();
+        renderTable();
+      }
+
+      function clearFilters() {
+        filters = {
+          search: "",
+          country: "",
+          platform: "",
+          audienceSize: "",
+          coaching: "",
+          earlyAccess: "",
+        };
+        document.getElementById("search-input").value = "";
+        [
+          "filter-country",
+          "filter-platform",
+          "filter-audience",
+          "filter-coaching",
+          "filter-early",
+        ].forEach((id) => (document.getElementById(id).value = ""));
+        applyFilters();
+      }
+
+      // ── RENDER TABLE ───────────────────────────────────────────────────────
+      function renderTable() {
+        const tbody = document.getElementById("table-body");
+        if (filteredEntries.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="12" class="empty-cell">
+                <div class="empty-state">
+                  <div class="empty-icon">${allEntries.length === 0 ? "📋" : "🔍"}</div>
+                  ${
+                    allEntries.length === 0
+                      ? `<p>No entries yet.</p>
+                       <p style="font-size:13px;margin-top:6px;opacity:.7">Submit the waitlist form on the <a href="index.html" style="color:var(--olive)">home</a> page to see entries here.</p>`
+                      : `<p>No entries match your current filters.</p>
+                       <button onclick="clearFilters()" class="btn btn-outline" style="margin-top:14px">Clear filters</button>`
+                  }
+                </div>
+              </td>
+            </tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filteredEntries
+          .map(
+            (entry, i) => `
+          <tr onclick="openDetail(${entry.id})">
+            <td class="col-num">${i + 1}</td>
+            <td class="col-date">${formatDate(entry.submittedAt)}</td>
+            <td class="col-name">${esc(entry.firstName)} ${esc(entry.lastName)}</td>
+            <td class="col-email"><a href="mailto:${esc(entry.email)}" onclick="event.stopPropagation()">${esc(entry.email)}</a></td>
+            <td class="col-ig">${esc(entry.instagram) || "—"}</td>
+            <td>${esc(entry.country) || "—"}</td>
+            <td class="col-profession">${esc(entry.profession) || "—"}</td>
+            <td>${esc(entry.platform) || "—"}</td>
+            <td>${esc(entry.audienceSize) || "—"}</td>
+            <td><span class="badge ${entry.earlyAccess === "Yes" ? "badge-yes" : "badge-no"}">${esc(entry.earlyAccess) || "—"}</span></td>
+            <td><span class="badge ${entry.coaching === "Yes" ? "badge-yes" : entry.coaching === "Maybe" ? "badge-maybe" : "badge-no"}">${esc(entry.coaching) || "—"}</span></td>
+            <td class="col-actions">
+              <button class="btn-delete" title="Delete" onclick="event.stopPropagation(); confirmDelete(${entry.id})">✕</button>
+            </td>
+          </tr>`,
+          )
+          .join("");
+      }
+
+      // ── STATS ──────────────────────────────────────────────────────────────
+      function updateStats() {
+        const n = filteredEntries.length;
+        document.getElementById("stat-total").textContent = n;
+        document.getElementById("stat-countries").textContent = new Set(
+          filteredEntries.map((e) => e.country).filter(Boolean),
+        ).size;
+
+        const platCount = {};
+        filteredEntries.forEach((e) => {
+          if (e.platform)
+            platCount[e.platform] = (platCount[e.platform] || 0) + 1;
+        });
+        const topPlat = Object.entries(platCount).sort(
+          (a, b) => b[1] - a[1],
+        )[0];
+        document.getElementById("stat-platform").textContent = topPlat
+          ? topPlat[0]
+          : "—";
+        document.getElementById("stat-platform-note").textContent = topPlat
+          ? `${topPlat[1]} entr${topPlat[1] === 1 ? "y" : "ies"}`
+          : "";
+
+        const yesCount = filteredEntries.filter(
+          (e) => e.coaching === "Yes",
+        ).length;
+        document.getElementById("stat-coaching").textContent =
+          n > 0 ? yesCount : "—";
+      }
+
+      function updateResultsCount() {
+        const el = document.getElementById("results-count");
+        const t = allEntries.length,
+          f = filteredEntries.length;
+        el.innerHTML =
+          f === t
+            ? `<strong>${t}</strong> entr${t === 1 ? "y" : "ies"}`
+            : `<strong>${f}</strong> of ${t} entries`;
+        document.getElementById("stat-note-filtered").textContent =
+          f !== t ? `(${f} filtered)` : "";
+      }
+
+      // ── DETAIL MODAL ───────────────────────────────────────────────────────
+      function openDetail(id) {
+        const entry = allEntries.find((e) => e.id === id);
+        if (!entry) return;
+        document.getElementById("modal-content").innerHTML =
+          buildDetailHTML(entry);
+        document.getElementById("modal").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal() {
+        document.getElementById("modal").classList.remove("open");
+        document.body.style.overflow = "";
+      }
+
+      function onModalOverlayClick(e) {
+        if (e.target === document.getElementById("modal")) closeModal();
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
+
+      function buildDetailHTML(e) {
+        const row = (label, val) =>
+          val
+            ? `<div class="detail-row"><span class="detail-label">${label}</span><span class="detail-value">${esc(val)}</span></div>`
+            : "";
+
+        const tags = e.challenges
+          ? e.challenges
+              .split("; ")
+              .map((c) => `<span class="challenge-tag">${esc(c)}</span>`)
+              .join("")
+          : '<span style="color:var(--text-light);font-size:13px">None selected</span>';
+
+        return `
+          <div class="modal-header">
+            <div>
+              <h2>${esc(e.firstName)} ${esc(e.lastName)}</h2>
+              <p>${esc(e.profession)}${e.country ? " · " + esc(e.country) : ""} · ${formatDate(e.submittedAt)}</p>
+            </div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="detail-section">
+              <h3>Contact</h3>
+              ${row("Email", e.email)}
+              ${row("Phone", e.phone)}
+              ${row("Instagram", e.instagram)}
+              ${row("LinkedIn", e.linkedin)}
+              ${row("Website", e.website)}
+            </div>
+            <div class="detail-section">
+              <h3>Background</h3>
+              ${row("Profession", e.profession)}
+              ${row("Country", e.country)}
+              ${row("Experience", e.experience)}
+              ${row("Audience Size", e.audienceSize)}
+              ${row("Primary Platform", e.platform)}
+              ${row("Early Access", e.earlyAccess)}
+              ${row("Coaching Interest", e.coaching)}
+            </div>
+            ${
+              e.contentType
+                ? `
+            <div class="detail-section full">
+              <h3>Content Type</h3>
+              <p class="detail-goal">${esc(e.contentType)}</p>
+            </div>`
+                : ""
+            }
+            <div class="detail-section full">
+              <h3>Challenges</h3>
+              <div class="challenge-tags">${tags}</div>
+            </div>
+            <div class="detail-section full">
+              <h3>12-Month Goal</h3>
+              <p class="detail-goal">${esc(e.goal) || '<em style="opacity:.5">Not provided</em>'}</p>
+            </div>
+          </div>`;
+      }
+
+      // ── DELETE ─────────────────────────────────────────────────────────────
+      async function confirmDelete(id) {
+        const entry = allEntries.find((e) => e.id === id);
+        if (!entry) return;
+        if (
+          !confirm(
+            `Delete entry for ${entry.firstName} ${entry.lastName}? This cannot be undone.`,
+          )
+        )
+          return;
+
+        const { error } = await supabase.from("users").delete().eq("id", id);
+        if (error) {
+          showToast("Delete failed: " + error.message);
+          return;
+        }
+
+        allEntries = allEntries.filter((e) => e.id !== id);
+        populateFilterDropdowns();
+        applyFilters();
+        showToast("Entry deleted.");
+      }
+
+      async function confirmClearAll() {
+        if (allEntries.length === 0) {
+          showToast("Nothing to clear.");
+          return;
+        }
+        if (
+          !confirm(
+            `Delete all ${allEntries.length} entries? This cannot be undone.`,
+          )
+        )
+          return;
+
+        const { error } = await supabase.from("users").delete().gte("id", 0);
+        if (error) {
+          showToast("Failed to clear: " + error.message);
+          return;
+        }
+
+        allEntries = [];
+        filteredEntries = [];
+        populateFilterDropdowns();
+        applyFilters();
+        showToast("All entries cleared.");
+      }
+
+      // ── EXPORT CSV ─────────────────────────────────────────────────────────
+      function exportCSV() {
+        if (filteredEntries.length === 0) {
+          showToast("No entries to export.");
+          return;
+        }
+
+        const headers = [
+          "#",
+          "Date",
+          "First Name",
+          "Last Name",
+          "Email",
+          "Phone",
+          "Instagram",
+          "LinkedIn",
+          "Profession",
+          "Website",
+          "Country",
+          "Experience",
+          "Audience Size",
+          "Platform",
+          "Content Type",
+          "Challenges",
+          "Goal",
+          "Early Access",
+          "Coaching",
+        ];
+
+        const rows = filteredEntries.map((e, i) =>
+          [
+            i + 1,
+            formatDate(e.submittedAt),
+            e.firstName,
+            e.lastName,
+            e.email,
+            e.phone || "",
+            e.instagram,
+            e.linkedin || "",
+            e.profession,
+            e.website || "",
+            e.country,
+            e.experience || "",
+            e.audienceSize || "",
+            e.platform || "",
+            e.contentType || "",
+            e.challenges || "",
+            e.goal || "",
+            e.earlyAccess || "",
+            e.coaching || "",
+          ].map((v) => `"${String(v).replace(/"/g, '""')}"`),
+        );
+
+        const csv = [
+          headers.map((h) => `"${h}"`).join(","),
+          ...rows.map((r) => r.join(",")),
+        ].join("\n");
+
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `waitlist_${new Date().toISOString().split("T")[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast(
+          `Exported ${filteredEntries.length} entr${filteredEntries.length === 1 ? "y" : "ies"}.`,
+        );
+      }
+
+      // ── HELPERS ────────────────────────────────────────────────────────────
+      function formatDate(iso) {
+        if (!iso) return "—";
+        return new Date(iso).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+      }
+
+      function esc(str) {
+        if (!str) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      let toastTimer;
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.style.display = "block";
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          t.style.display = "none";
+        }, 3000);
+      }
+
+      // ── AUTH ───────────────────────────────────────────────────────────────
+      async function checkAuth() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          showDashboard();
+        } else {
+          document.getElementById("login-overlay").style.display = "flex";
+        }
+      }
+
+      function showDashboard() {
+        document.getElementById("login-overlay").style.display = "none";
+        loadEntries();
+      }
+
+      async function handleLogin() {
+        const email = document.getElementById("login-email").value.trim();
+        const password = document.getElementById("login-password").value;
+        const errorEl = document.getElementById("login-error");
+        const btn = document.getElementById("login-btn");
+
+        errorEl.style.display = "none";
+        btn.disabled = true;
+        btn.textContent = "Signing in…";
+
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+        if (error) {
+          errorEl.textContent = error.message;
+          errorEl.style.display = "block";
+          btn.disabled = false;
+          btn.textContent = "Sign in";
+          return;
+        }
+
+        showDashboard();
+      }
+
+      async function handleLogout() {
+        await supabase.auth.signOut();
+        allEntries = [];
+        filteredEntries = [];
+        document.getElementById("table-body").innerHTML = "";
+        document.getElementById("login-email").value = "";
+        document.getElementById("login-password").value = "";
+        document.getElementById("login-error").style.display = "none";
+        document.getElementById("login-btn").textContent = "Sign in";
+        document.getElementById("login-overlay").style.display = "flex";
+      }
+
+      // ── EVENT LISTENERS ────────────────────────────────────────────────────
+      document.getElementById("search-input").addEventListener("input", (e) => {
+        filters.search = e.target.value;
+        applyFilters();
+      });
+
+      const filterMap = {
+        "filter-country": "country",
+        "filter-platform": "platform",
+        "filter-audience": "audienceSize",
+        "filter-coaching": "coaching",
+        "filter-early": "earlyAccess",
+      };
+      Object.keys(filterMap).forEach((id) => {
+        document.getElementById(id).addEventListener("change", (e) => {
+          filters[filterMap[id]] = e.target.value;
+          applyFilters();
+        });
+      });
+
+      // Expose functions used in inline onclick attributes
+      window.setSort = setSort;
+      window.clearFilters = clearFilters;
+      window.openDetail = openDetail;
+      window.closeModal = closeModal;
+      window.onModalOverlayClick = onModalOverlayClick;
+      window.confirmDelete = confirmDelete;
+      window.confirmClearAll = confirmClearAll;
+      window.exportCSV = exportCSV;
+      window.handleLogin = handleLogin;
+      window.handleLogout = handleLogout;
+
+      // Allow Enter key in login form fields
+      ["login-email", "login-password"].forEach((id) => {
+        document.getElementById(id).addEventListener("keydown", (e) => {
+          if (e.key === "Enter") handleLogin();
+        });
+      });
+
+      // ── BOOT ───────────────────────────────────────────────────────────────
+      checkAuth();
+      document
+        .querySelector(`th[data-sort="submittedAt"]`)
+        .classList.add("sort-desc");
+    </script>
+  </body>
+</html>
